@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:untitled/renderbox/card_custom_render.dart';
 import 'package:untitled/renderbox/custom_layout.dart';
 
 void main() => runApp(MyApp());
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CustomLayoutPage(),
+      home: CustomCardRenderBox(),
       theme: ThemeData(primarySwatch: Colors.blue),
     );
   }
