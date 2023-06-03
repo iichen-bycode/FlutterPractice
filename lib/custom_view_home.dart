@@ -16,11 +16,40 @@ class CustomViewHomeState extends State<CustomViewHome> {
       ),
       body: Container(
         padding: const EdgeInsets.all(12),
-        color: Colors.black12,
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Collapse(),
+              InkWell(
+                child: Center(child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text("伸缩组件"),
+                )),
+                onTap: () => Navigator.pushNamed(context, '/collapse'),
+              ),
+              SizedBox(height: 12,),
+              InkWell(
+                child: Center(child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text("进度Bar"),
+                )),
+                onTap: () => Navigator.pushNamed(context, '/progress_slider'),
+              ),
+              SizedBox(height: 12,),
+              InkWell(
+                child: Center(child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text("侧滑删除"),
+                )),
+                onTap: () => Navigator.pushNamed(context, '/slider_delete'),
+              ),
+              SizedBox(height: 12,),
+              InkWell(
+                child: Center(child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text("周滑动柱状表"),
+                )),
+                onTap: () => Navigator.pushNamed(context, '/week_slider_chart'),
+              ),
             ],
           ),
         ),

@@ -24,62 +24,69 @@ class CollapseState extends State<Collapse> with SingleTickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller.view,
-      builder: (BuildContext context, Widget child) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.white,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
-          child: Column(
-            children: [
-              Row(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('伸缩组件'),
+      ),
+      body: SingleChildScrollView(
+        child: AnimatedBuilder(
+          animation: _controller.view,
+          builder: (BuildContext context, Widget child) {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Text(
-                      "完善更多信息，获得精准实例方案(选填)",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.black
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "完善更多信息，获得精准实例方案(选填)",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.black
+                          ),
+                        ),
+                      ),
+                      IconButton(icon:Icon(isExpand ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down), onPressed: () {
+                        setState(() {
+                          isExpand = !isExpand;
+                        });
+                        if(_controller.isCompleted)
+                          _controller.reverse();
+                        else
+                          _controller.forward();
+                      },)
+                    ],
+                  ),
+                  ClipRect(
+                    child: Align(
+                      alignment: Alignment.center,
+                      heightFactor: _heightFactor.value,
+                      child: Container(
+                        child: Column(
+                          children: [
+                            Container(height: 200, color: Colors.pinkAccent,),
+                            Container(height: 200, color: Colors.blueGrey,),
+                            Container(height: 200, color: Colors.deepPurpleAccent,),
+                            Container(height: 200, color: Colors.green,)
+                          ],
+                        ),
+                        color: Colors.pinkAccent,
                       ),
                     ),
                   ),
-                  IconButton(icon:Icon(isExpand ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down), onPressed: () {
-                    setState(() {
-                      isExpand = !isExpand;
-                    });
-                    if(_controller.isCompleted)
-                      _controller.reverse();
-                    else
-                      _controller.forward();
-                  },)
                 ],
               ),
-              ClipRect(
-                child: Align(
-                  alignment: Alignment.center,
-                  heightFactor: _heightFactor.value,
-                  child: Container(
-                    child: Column(
-                      children: [
-                        Container(height: 200, color: Colors.pinkAccent,),
-                        Container(height: 200, color: Colors.blueGrey,),
-                        Container(height: 200, color: Colors.deepPurpleAccent,),
-                        Container(height: 200, color: Colors.green,)
-                      ],
-                    ),
-                    color: Colors.pinkAccent,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      child: Text("hah "),
+            );
+          },
+          child: Text("hah "),
+        ),
+      ),
     );
   }
 
