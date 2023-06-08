@@ -5,6 +5,7 @@ class Collapse extends StatefulWidget {
   CollapseState createState() => new CollapseState();
 }
 
+// 可以看 ListTile的内部实现 就是ClipRect+Align
 class CollapseState extends State<Collapse> with SingleTickerProviderStateMixin{
   AnimationController _controller;
   Animation<double> _heightFactor;

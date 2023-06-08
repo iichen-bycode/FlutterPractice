@@ -6,6 +6,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:untitled/model/columnar_model.dart';
 import 'package:untitled/model/week_model.dart';
 
+GlobalKey key = GlobalKey();
 class WeekSliderChart extends StatefulWidget {
   @override
   WeekSliderChartState createState() => new WeekSliderChartState();
@@ -24,21 +25,40 @@ class WeekSliderChartState extends State<WeekSliderChart> {
           child: Container(
             width: MediaQuery.of(context).size.width * 0.8,
             height: 200,
+            key: key,
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTapDown: (detail) {
+                Offset globalPosition = detail.globalPosition;
+                RenderBox renderBox = key.currentContext.findRenderObject();
+                Offset localPosition = renderBox.globalToLocal(globalPosition);
+                print(">>>>>> $localPosition $globalPosition");
+
+                for(int i=0;i<positionList.length;i++) {
+                  if(positionList[i].contains(localPosition)) {
+                    setState(() {
+                      chooseIndex = i;
+                    });
+                    break;
+                  }
+                }
+              },
               child: PageView.builder(
                 reverse: true,
                 onPageChanged: (page) {
-                  if(page == data.length - 2) {
-                    // 预加载
-                    getData(previousMonth);
-                    print(">>>>>>>>> $page 添加");
-                  }
-                  print(">>>>>>>>> $page");
+                  // if(page == data.length - 2) {
+                  //   // 预加载
+                  //   getData(previousMonth);
+                  //   print(">>>>>>>>> $page 添加");
+                  // }
+                  // print(">>>>>>>>> $page");
                 },
                 itemBuilder: (BuildContext context, int index) {
                   return CustomPaint(
                     painter: WeekColumnarPainter(
-                        data[index]
+                        data[index],
+                        positionList,
+                      chooseIndex
                     ),
                   );
                 },
@@ -49,6 +69,8 @@ class WeekSliderChartState extends State<WeekSliderChart> {
       ),
     );
   }
+  int chooseIndex = -1;
+  List<RRect> positionList = [];
   List<ColumnarModel> data = [];
 
   DateTime previousMonth;
@@ -73,8 +95,8 @@ class WeekSliderChartState extends State<WeekSliderChart> {
     Random random = Random();
 
     // 获取前一个月的日期范围
-    previousMonth = now.subtract(Duration(days: 7));
-    DateTime startOfMonth = DateTime(previousMonth.year, previousMonth.month, 1);
+    previousMonth = now.subtract(Duration(days: 8));
+    DateTime startOfMonth = DateTime(previousMonth.year, previousMonth.month, 21);
     DateTime endOfMonth = DateTime(now.year, now.month, 0);
     previousMonth = startOfMonth;
 
@@ -129,8 +151,13 @@ class WeekColumnarPainter extends CustomPainter {
   Paint upRectPaint;
   Paint downRectPaint;
 
-  WeekColumnarPainter(ColumnarModel model) {
+  List<RRect> positionList;
+
+  int chooseIndex = -1;
+  WeekColumnarPainter(ColumnarModel model,List<RRect> positionList, int chooseIndex) {
     this.model = model;
+    this.chooseIndex = chooseIndex;
+    this.positionList = positionList;
     dashLinePaint = Paint()..color = model.dashColor..strokeWidth = 1..style = PaintingStyle.stroke;
     dashTextPaint = Paint()..color = model.dashColor;
 
@@ -191,9 +218,15 @@ class WeekColumnarPainter extends CustomPainter {
 
       // 矩形
       // 12 换成数组里最大的那个  mock数据 最大是这个
-      RRect rect = RRect.fromLTRBAndCorners(startX, realH * (weekModel.time / 12), startX + itemW, realH, topLeft: Radius.circular(5), topRight: Radius.circular(5));
+      RRect rect;
+      if(chooseIndex == i) {
+        rect = RRect.fromLTRBAndCorners(startX - 2, realH * (weekModel.time / 12), startX + itemW + 2, realH, topLeft: Radius.circular(5), topRight: Radius.circular(5));
+      } else {
+        rect = RRect.fromLTRBAndCorners(startX, realH * (weekModel.time / 12), startX + itemW, realH, topLeft: Radius.circular(5), topRight: Radius.circular(5));
+      }
       // 取中间数
       canvas.drawRRect(rect,weekModel.time >= 6 ? downRectPaint : upRectPaint);
+      positionList.add(rect);
 
       // 底部虚线
       drawDashLine(size, canvas,rightGap,realH,model.dashBottomGap,model.dashWidth,dashBottomLinePaint);
